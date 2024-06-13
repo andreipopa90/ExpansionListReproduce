@@ -1,0 +1,122 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:templateSelectors="clr-namespace:ExpansionListReproduce.TemplateSelectors"
+             xmlns:viewModels="clr-namespace:ExpansionListReproduce.ViewModels"
+             x:Class="ExpansionListReproduce.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary>
+                    <DataTemplate
+                        x:Key="DefaultTemplate"
+                        x:DataType="viewModels:ListItemViewModel">
+                        <SwipeView
+                        IsEnabled="{Binding Items}">
+                            <Grid RowDefinitions="5,auto,auto,5" ColumnDefinitions="5, 50, *, auto, 30, 5" RowSpacing="0" ColumnSpacing="7.5">
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ItemTouchCommand}" NumberOfTapsRequired="1" />
+                                </Grid.GestureRecognizers>
+
+                                <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                HorizontalOptions="Center"
+                                Text="Item"
+                                FontSize="15"/>
+
+                                <StackLayout
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                IsVisible="{Binding ShowExpandedView, Mode=TwoWay}"
+                                Orientation="Vertical" Margin="0,14,0,0">
+
+                                    <FlexLayout Direction="Column"
+                                            BindableLayout.ItemsSource="{Binding Items, Mode=OneTime}"
+                                            IsVisible="{Binding ExpandList, Mode=OneTime}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="viewModels:ControlViewModel">
+                                                <ContentView>
+                                                    <StackLayout Margin="0,0,0,14">
+                                                        <FlexLayout
+                                                        HorizontalOptions="Center"
+                                                        Wrap="Wrap"
+                                                        BindableLayout.ItemsSource="{Binding Items, Mode=OneTime}"
+                                                        IsVisible="True">
+                                                            <BindableLayout.ItemTemplate>
+                                                                <DataTemplate x:DataType="viewModels:ExpandableItemViewModel">
+                                                                    <Button
+                                                                    FlexLayout.Grow="1"
+                                                                    Text="{Binding Name}"
+                                                                    TextTransform="None"
+                                                                    TextColor="Red"
+                                                                    BorderColor="Blue"
+                                                                    Padding="10"
+                                                                    MinimumWidthRequest="80"/>
+                                                                </DataTemplate>
+                                                            </BindableLayout.ItemTemplate>
+                                                        </FlexLayout>
+                                                    </StackLayout>
+                                                </ContentView>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </FlexLayout>
+                                    <StackLayout BindableLayout.ItemsSource="{Binding Details, Mode=OneTime}">
+										<BindableLayout.ItemTemplate>
+											<DataTemplate x:DataType="viewModels:DetailsViewModel">
+												<StackLayout Spacing="0" HorizontalOptions="StartAndExpand" Margin="0,0,0,14">
+													<Label Text="{Binding Title, Mode=OneTime}"
+															FontSize="15"
+															IsVisible="{Binding Title, Mode=OneTime}"
+															FontAttributes="Bold">
+													</Label>
+													<Label Text="{Binding Text, Mode=OneTime}"
+															 FontSize="15"
+															 IsVisible="{Binding Text, Mode=OneTime}"
+															 FontAttributes="None">
+													</Label>
+													<Image
+														VerticalOptions="Start" HorizontalOptions="StartAndExpand"
+														IsVisible="{Binding Image, Mode=OneTime}">
+													</Image>
+													<Label Text="{Binding SubText, Mode=OneTime}"
+															 FontSize="15"
+															 IsVisible="{Binding SubText, Mode=OneTime}"
+															 FontAttributes="Italic">
+													</Label>
+												</StackLayout>
+											</DataTemplate>
+										</BindableLayout.ItemTemplate>
+									</StackLayout>
+									<Label
+										x:Name="EmptyLabel"
+										Text="No details available"
+										Margin="0, 10, 0, 10"
+										HorizontalOptions="Center">
+										<Label.Triggers>
+											<DataTrigger TargetType="Label" Binding="{Binding ExpandList}" Value="True">
+												<Setter TargetName="EmptyLabel" Property="IsVisible" Value="False" />
+											</DataTrigger>
+											<DataTrigger TargetType="Label" Binding="{Binding ExpandList}" Value="False">
+												<Setter TargetName="EmptyLabel" Property="IsVisible" Value="True" />
+											</DataTrigger>
+										</Label.Triggers>
+									</Label>
+                                </StackLayout>
+                            </Grid>
+                        </SwipeView>
+                    </DataTemplate>
+                </ResourceDictionary>
+
+                <ResourceDictionary>
+                    <templateSelectors:ItemViewTemplateSelector
+						x:Key="ItemViewTemplateSelector"
+						DefaultTemplate ="{StaticResource DefaultTemplate}" />
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
